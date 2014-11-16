@@ -4,7 +4,7 @@
 
 import RPi.GPIO as GPIO, time, os
 
-from datetime import datetime
+from datetime import datetime 
 
 DEBUG = 1
 GPIO.setmode(GPIO.BCM)
@@ -22,10 +22,14 @@ def slowspiwrite(clockpin, datapin, byteout):
 		GPIO.output(clockpin, False)
 
 
+TOP_LED=7
+LED_SIZE=32
+LED_POWER=127
+LED_SPREAD=2 / float(LED_SIZE)
+
+
 SPICLK = 18
 SPIDO = 17
-
-ledpixels = [0] * 32
 
 def writestrip(pixels):
 	spidev = file("/dev/spidev0.0", "w")
@@ -55,35 +59,9 @@ def colorwipe(pixels, c, delay):
 		writestrip(pixels)
 		time.sleep(delay)		
 
-def Wheel(WheelPos):
-	if (WheelPos < 85):
-   		return Color(WheelPos * 3, 255 - WheelPos * 3, 0)
-	elif (WheelPos < 170):
-   		WheelPos -= 85;
-   		return Color(255 - WheelPos * 3, 0, WheelPos * 3)
-	else:
-		WheelPos -= 170;
-		return Color(0, WheelPos * 3, 255 - WheelPos * 3)
-
-def rainbowCycle(pixels, wait):
-	for j in range(256): # one cycle of all 256 colors in the wheel
-    	   for i in range(len(pixels)):
-# tricky math! we use each pixel as a fraction of the full 96-color wheel
-# (thats the i / strip.numPixels() part)
-# Then add in j which makes the colors go around per pixel
-# the % 96 is to make the wheel cycle around
-      		setpixelcolor(pixels, i, Wheel( ((i * 256 / len(pixels)) + j) % 256) )
-	   writestrip(pixels)
-	   time.sleep(wait)
-
-
 #colorwipe(ledpixels, Color(255, 0, 0), 0.01)
 #colorwipe(ledpixels, Color(0, 255, 0), 0.01)
 #colorwipe(ledpixels, Color(0, 0, 255), 0.01)
-
-LED_SIZE=32
-LED_POWER=127
-LED_SPREAD=5 / float(LED_SIZE)
 
 
 # target, and position are a float between 0 and 1
@@ -116,15 +94,30 @@ def buildClockface(pixels, clock, wait=0):
 
   h = ((hour + (min / 60.0)) / 12.0) * len(pixels);
   m = ((min +  (sec / 60.0))/ 60.0) * len(pixels);
-  s = ((sec + (now.microsecond/1000000.0) )  / 60.0) * len(pixels);
+  s = ((sec + (clock.microsecond/1000000.0) )  / 60.0) * len(pixels);
+
+
 
   for j in range(LED_SIZE):
-    setpixelcolor(pixels, j, Color(
+    led=(j+TOP_LED) % LED_SIZE # Rotate around to so the selected TOP_LED is at 12:00
+    setpixelcolor(pixels, led, Color(
            calcSpread(h,j,LED_POWER),
            calcSpread(m,j,LED_POWER),
            calcSpread(s,j,LED_POWER))
           )
   
+
+
+# Run a 12 hour cycle for testing.
+h=0;m=0;s=0
+
+#for h in range(12):
+#  for m in range(60):
+#    for s in xrange(0,60,2):
+#      pixels =[0] * LED_SIZE
+#      buildClockface(pixels, datetime.strptime("%s:%s:%s" % (h,m,s), "%H:%M:%S"))
+#      writestrip(pixels)
+#      time.sleep(0.001)
 
 while True:
   pixels =[0] * LED_SIZE
