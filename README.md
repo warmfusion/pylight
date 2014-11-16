@@ -18,20 +18,6 @@ I'd suggest having a read of the source code to understand a bit more about the 
     2. The closer it is, the brighter, and reach 0 when you're 'spread_pixel' distance away.
 
 
-def calcSpread(target, position, power):
-
-  ledDist = abs(target - position) # How far is the target from the position
-  ledDist = ledDist if ledDist <= LED_SIZE/2 else abs(ledDist - LED_SIZE) # Wrap around edge
-  distRatio = ledDist / LED_SIZE              # as a ratio of the whole
-
-  # If the LED is outside our spread then, just return
-  if distRatio > LED_SPREAD: return 0
-
-  # Now calculate what power to return;
-#  print "t: %f, p: %f, s: %f ; dist: %f" % (target, position, LED_SPREAD, distRatio)  
-  offset = (LED_SPREAD - distRatio) / LED_SPREAD
-  return int(power * offset)
-
 [1]: https://learn.adafruit.com/system/assets/assets/000/001/589/medium640/raspberry_pi_diagram.png?1396774138 'CC from [Adafruit[2]'
 [2]: https://learn.adafruit.com/light-painting-with-raspberry-pi/hardware'
 [3]: https://github.com/falldeaf/Cloud_Lamp/blob/master/test_scripts/adafruit_ledpixels.py
