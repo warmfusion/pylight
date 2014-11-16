@@ -6,7 +6,18 @@ import RPi.GPIO as GPIO, time, os
 
 from datetime import datetime 
 
+
+TOP_LED=7
+LED_SIZE=32
+LED_POWER=127
+LED_SPREAD=2 / float(LED_SIZE)
+
+
+SPICLK = 18
+SPIDO = 17
+
 DEBUG = 1
+
 GPIO.setmode(GPIO.BCM)
 
 def slowspiwrite(clockpin, datapin, byteout):
@@ -20,16 +31,6 @@ def slowspiwrite(clockpin, datapin, byteout):
 		byteout <<= 1
 		GPIO.output(clockpin, True)
 		GPIO.output(clockpin, False)
-
-
-TOP_LED=7
-LED_SIZE=32
-LED_POWER=127
-LED_SPREAD=2 / float(LED_SIZE)
-
-
-SPICLK = 18
-SPIDO = 17
 
 def writestrip(pixels):
 	spidev = file("/dev/spidev0.0", "w")
@@ -52,16 +53,6 @@ def setpixelcolor(pixels, n, c):
 	if (n >= len(pixels)):
 		return
 	pixels[n] = c
-
-def colorwipe(pixels, c, delay):
-	for i in range(len(pixels)):
-		setpixelcolor(pixels, i, c)
-		writestrip(pixels)
-		time.sleep(delay)		
-
-#colorwipe(ledpixels, Color(255, 0, 0), 0.01)
-#colorwipe(ledpixels, Color(0, 255, 0), 0.01)
-#colorwipe(ledpixels, Color(0, 0, 255), 0.01)
 
 
 # target, and position are a float between 0 and 1
