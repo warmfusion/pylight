@@ -82,15 +82,21 @@ def rainbowCycle(pixels, wait):
 #colorwipe(ledpixels, Color(0, 0, 255), 0.01)
 
 LED_SIZE=32
-LED_POWER=64
-LED_SPREAD=1 / float(LED_SIZE)
+LED_POWER=127
+LED_SPREAD=5 / float(LED_SIZE)
 
 
 # target, and position are a float between 0 and 1
+# This function calculates a power rating to return
+# for a given position and target on the strip
+# such that the brightness scales linearly from the
+# target out to the spread width on either side of
+# the target LED.
 def calcSpread(target, position, power):
 
-  ledDist = abs(target - position) # distance between points
-  distRatio = ledDist / LED_SIZE   # as a ratio of the whole
+  ledDist = abs(target - position) # How far is the target from the position
+  ledDist = ledDist if ledDist <= LED_SIZE/2 else abs(ledDist - LED_SIZE) # Wrap around edge
+  distRatio = ledDist / LED_SIZE              # as a ratio of the whole
 
   # If the LED is outside our spread then, just return
   if distRatio > LED_SPREAD: return 0
@@ -108,13 +114,10 @@ def buildClockface(pixels, clock, wait=0):
   min = clock.minute
   sec = clock.second
 
-  h = (hour / 12.0) * len(pixels);
-  setpixelcolor(pixels, int(h), Color(LED_POWER,0,0))
-
-  m = (min / 60.0) * len(pixels);
-  setpixelcolor(pixels, int(m), Color(0,0,LED_POWER))
-  
+  h = ((hour + (min / 60.0)) / 12.0) * len(pixels);
+  m = ((min +  (sec / 60.0))/ 60.0) * len(pixels);
   s = ((sec + (now.microsecond/1000000.0) )  / 60.0) * len(pixels);
+
   for j in range(LED_SIZE):
     setpixelcolor(pixels, j, Color(
            calcSpread(h,j,LED_POWER),
@@ -128,6 +131,7 @@ while True:
   now = datetime.now().time()
   buildClockface(pixels, now)
   writestrip(pixels)
+  time.sleep(0.01)
 
 #while True:
 #	rainbowCycle(ledpixels, 0.01)
