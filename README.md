@@ -18,6 +18,14 @@ I'd suggest having a read of the source code to understand a bit more about the 
     2. The closer it is, the brighter, and reach 0 when you're 'spread_pixel' distance away.
 
 
-[1]: https://learn.adafruit.com/system/assets/assets/000/001/589/medium640/raspberry_pi_diagram.png?1396774138 'CC from [Adafruit[2]'
+## Running
+
+Heres a fairly rough and ready implementation stuck to a cork board untill I find a better mounting...
+
+![CorkClock][4]
+
+
+[1]: https://learn.adafruit.com/system/assets/assets/000/001/589/medium640/raspberry_pi_diagram.png?1396774138 'CC from Adafruit[2]'
 [2]: https://learn.adafruit.com/light-painting-with-raspberry-pi/hardware'
 [3]: https://github.com/falldeaf/Cloud_Lamp/blob/master/test_scripts/adafruit_ledpixels.py
+[4]: assets/clock-face.jpg
